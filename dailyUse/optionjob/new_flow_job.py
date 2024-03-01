@@ -8,7 +8,7 @@ import aiomysql
 import cx_Oracle
 import jsonpath
 import uvicorn as uvicorn
-from fastapi import FastAPI ,APIRouter
+from fastapi import FastAPI, APIRouter, Path
 from pydantic import BaseModel
 import logging
 import aiohttp
@@ -19,10 +19,10 @@ option = APIRouter()
 
 
 #固收数据库
-config = {"host": "10.51.167.184",
-          "user": "otcmdev",
-          "password": "Gf_otcmdev_test",
-          "port": 15069,
+config = {"host": "10.128.12.222",
+          "user": "otcmtst",
+          "password": "Gf_otcmtst_test",
+          "port": 15006,
           "db": "gf_ficc"}
 #股衍数据库
 config_otc = {"host": "10.62.146.18",
@@ -43,8 +43,13 @@ class OptionFlowResponse(BaseModel):
     documentId : str
 
 
-@option.post("/counterpartyjob/create", description="自动创建发起期权产品监测流程",summary="期权产品监测流程")
-async def job(corporatename: str, customerManager: str , enviroment : Enviroment):
+@option.post("/counterpartyjob/create",summary="期权产品监测流程")
+async def job(corporatename: str, customerManager: str , enviroment : Enviroment ):
+    '''
+    :param corporatename: 公司名称
+    :param customerManager: 客户经理（中文）
+    :param enviroment: 40-固收测试环境,216-股衍测试环境
+    '''
     try:
         print(f"公司名称：{corporatename},客户经理：{customerManager},环境：{enviroment.name}")
         env = enviroment.value
@@ -92,6 +97,7 @@ async def job(corporatename: str, customerManager: str , enviroment : Enviroment
                             delete_option_process = f"delete from counterparty_prod_monitor_flow where corporate_name = '{corporatename}' "
                             await cursor.execute(delete_option_process)
                             await db.commit()
+                            print(f"execute_sql:{delete_option_process}")
                             select_clientid = f"select client_id from otc_derivative_counterparty where corporate_name = '{corporatename}' and is_prod_holder  = '03'"
                             await cursor.execute(select_clientid)
                             client_id_list = [x[0] for x in await cursor.fetchall()]
@@ -214,6 +220,12 @@ async def job(corporatename: str, customerManager: str , enviroment : Enviroment
 
 @option.delete("/deleteflow",description="删除该机构下的所有的期权产品监测流程，",summary="删除在途的期权产品监测流程",operation_id='delete_option_flow')
 def delete(enviroment : Enviroment, corporatenameList : List[str]):
+    '''
+
+    :param enviroment: 40-固收测试环境,216-股衍测试环境
+    :param corporatenameList: 公司名称列表
+    :return:
+    '''
     print(enviroment.name , enviroment.value)
     databases_config = config if enviroment.name == 'FICC' else config_otc
     db = cx_Oracle.connect("gf_otc", "otc1qazXSW@", "10.62.146.18:1521/jgjtest")
@@ -232,7 +244,10 @@ def delete(enviroment : Enviroment, corporatenameList : List[str]):
         return e
     else :
         db.commit()
-        return f"已成功删除{corporatenameList}的回访流程"
+        return {"code": 200,
+                "env": enviroment.name,
+                "data": f"已经成功删除{corporatenameList}的流程",
+                "status": "Successfully"}
     finally:
         cursor.close()
         db.close()

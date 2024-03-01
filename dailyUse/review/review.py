@@ -11,7 +11,7 @@ import pymysql
 import requests
 import uvicorn as uvicorn
 from fastapi import FastAPI, APIRouter, Query, Depends
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 import logging
 import aiohttp
 import json
@@ -56,83 +56,83 @@ class ReviewRecordInfo(BaseModel):
     '''
     流程记录表
     '''
-    ID : Optional[str]
-    DOC_ID : Optional[str]
-    TITLE : Optional[str]
-    CLIENT_NAME : Optional[str]
-    UNIFIEDSOCIAL_CODE : Optional[str]
-    REVIEW_DATE : Optional[date]
-    REVIEW_USER : Optional[str]
-    REVIEW_NAME : Optional[str]
-    CURRENT_STATUS : Optional[str]
-    CURRENT_OPERATOR : Optional[str]
-    CURRENT_ACTIVITY_NAME : Optional[str]
-    RECORD_ID : Optional[str]
-    CREATED_DATETIME : Optional[datetime]
-    WORK_PHONE : Optional[str]
-    PHONE: Optional[str]
-    SECURITY_LEVEL : Optional[str]
-    SECURITY_LEVEL_DETAIL : Optional[str]
-    URGENCY_LEVEL : Optional[str]
-    URGENCY_LEVEL_REASON : Optional[str]
-    SALE_PERSON : Optional[str]
-    REVIEW_TERM : Optional[date]
-    REVIEW_PROCESS_TYPE : Optional[str]
-    SPECIAL_MENTIONED_CUSTOMER : Optional[str]
-    VERSION : Optional[str]
-    NO_MORE_REVIEW : Optional[str]
-    ACCOUNTING_FIRM_NAME : Optional[str]
-    SUPPLEMENTARY_MATERIALS_TIME : Optional[date]
-    SUPPLEMENTARY_MATERIALS : Optional[str]
-    REACH_TO_03_DATETIME : Optional[datetime]
-    SERIAL_NUMBER : Optional[str]
+    ID : Optional[str] =Field(None,description="id")
+    DOC_ID : Optional[str]  =Field(None,description="文档号")
+    TITLE : Optional[str] =Field(None,description="标题")
+    CLIENT_NAME : Optional[str] =Field(None,description="公司名称")
+    UNIFIEDSOCIAL_CODE : Optional[str] =Field(None,description="社会信用代码")
+    REVIEW_DATE : Optional[date] =Field(None,description="回访日期")
+    REVIEW_USER : Optional[str] =Field(None,description="回访人员oa账号")
+    REVIEW_NAME : Optional[str] =Field(None,description="")
+    CURRENT_STATUS : Optional[str] =Field(None,description="当前状态")
+    CURRENT_OPERATOR : Optional[str] =Field(None,description="当前处理人")
+    CURRENT_ACTIVITY_NAME : Optional[str] =Field(None,description="当前节点名称")
+    RECORD_ID : Optional[str] =Field(None,description="CLIENT_REVIEW_DETAIL外键")
+    CREATED_DATETIME : Optional[datetime] =Field(None,description="创建日期")
+    WORK_PHONE : Optional[str] =Field(None,description="工作电话")
+    PHONE: Optional[str] =Field(None,description="电话")
+    SECURITY_LEVEL : Optional[str] =Field(None,description="安全等级")
+    SECURITY_LEVEL_DETAIL : Optional[str] =Field(None,description="安全等级有效时间")
+    URGENCY_LEVEL : Optional[str] =Field(None,description="紧急程度")
+    URGENCY_LEVEL_REASON : Optional[str] =Field(None,description="紧急原因")
+    SALE_PERSON : Optional[str] =Field(None,description="对应总部销售")
+    REVIEW_TERM : Optional[date] =Field(None,description="回访期限")
+    REVIEW_PROCESS_TYPE : Optional[str] =Field(None,description="回访流程发起类型")
+    SPECIAL_MENTIONED_CUSTOMER : Optional[str] =Field(None,description="是否为关注类客户")
+    VERSION : Optional[str] =Field(None,description="标识存量增量数据，增量为202210，存量为空")
+    NO_MORE_REVIEW : Optional[str] =Field(None,description="不再自动回访")
+    ACCOUNTING_FIRM_NAME : Optional[str] =Field(None,description="会计师事务所")
+    SUPPLEMENTARY_MATERIALS_TIME : Optional[date] =Field(None,description="另行补充材料完成日期")
+    SUPPLEMENTARY_MATERIALS : Optional[str] =Field(None,description="需要另行补充材料，'true'/'false'")
+    REACH_TO_03_DATETIME : Optional[datetime] =Field(None,description="到达03节点的时间")
+    SERIAL_NUMBER : Optional[str] =Field(None,description="流程文档编号")
 
 #回访流程counterparty表
 class ReviewCounterpartyInfo(BaseModel):
     '''
     回访对象表
     '''
-    ID : Optional[str]
-    RECORD_ID : Optional[str]
-    PRODUCT_NAME : Optional[str]
-    CREATED_DATETIME : Optional[datetime]
-    CLIENT_ID : Optional[str]
-    IGNORE : Optional[str]
-    BENEFIT_OVER_FLAG : Optional[str]
-    AGREE_INFO : Optional[str]
-    ALLOW_BUSI_TYPE : Optional[str]
-    CLIENT_QUALIFY_REVIEW : Optional[str]
-    SEQ : Optional[int]
-    REVIEW_BUFFER_START : Optional[datetime]
-    SUPPLEMENTARY_MATERIALS_NOTE : Optional[str]
-    SHOW_NOTE : Optional[str]
-    ALLOW_BUSI_TYPE_HIS : Optional[str]
-    MANUAL_DEL_ALLOW_BUSI_TYPE : Optional[str]
-    PRODUCT_ASSET : Optional[int] = None
+    ID : Optional[str] =Field(None,description="id")
+    RECORD_ID : Optional[str] =Field(None,description="记录id")
+    PRODUCT_NAME : Optional[str] =Field(None,description="产品名称")
+    CREATED_DATETIME : Optional[datetime] =Field(None,description="创建时间")
+    CLIENT_ID : Optional[str] =Field(None,description="客户编号")
+    IGNORE : Optional[str] =Field(None,description="是否本次不回访")
+    BENEFIT_OVER_FLAG : Optional[str] =Field(None,description="是否存在单一委托人占比超过20%的情况（初始值来源台账，待流程结束回填）")
+    AGREE_INFO : Optional[str] =Field(None,description="以下信息是否一致，增量'Y'或'N'，存量为空")
+    ALLOW_BUSI_TYPE : Optional[str] =Field(None,description="拟参与的衍生品业务类型")
+    CLIENT_QUALIFY_REVIEW : Optional[str] =Field(None,description="客户资质复核结果")
+    SEQ : Optional[int] =Field(None,description="回访对象的序号")
+    REVIEW_BUFFER_START : Optional[datetime] =Field(None,description="拟限制交易日（取自beffer）")
+    SUPPLEMENTARY_MATERIALS_NOTE : Optional[str] =Field(None,description="补充材料说明")
+    SHOW_NOTE : Optional[str] =Field(None,description="展示补充材料说明，'true'/'false'")
+    ALLOW_BUSI_TYPE_HIS : Optional[str] =Field(None,description="拟参与的衍生品业务类型历史")
+    MANUAL_DEL_ALLOW_BUSI_TYPE : Optional[str] =Field(None,description="回访中手动减少的衍生品业务类型")
+    PRODUCT_ASSET : Optional[int]  =Field(None,description="产品资产净值（万元）")
 
 #回访流程受益人表
 class ReviewAmlBeneficiaryInfo(BaseModel):
     '''
     回访受益人信息
     '''
-    ID : Optional[str]
+    ID : Optional[str] = Field(None,description='主键')
     ENTITY_TYPE : Optional[str]
-    CATEGORY : Optional[str]
+    CATEGORY : Optional[str] = Field(None,description='受益所有人的身份')
     NAME : Optional[str]
-    ID_KIND : Optional[str]
-    ID_NO : Optional[str]
-    BIRTH : Optional[str]
-    GENDER : Optional[str]
-    COUNTRY : Optional[str]
-    ID_VALIDDATE_START : Optional[str]
-    ID_VALIDDATE_END : Optional[str]
-    PHONE : Optional[str]
-    MOBILE : Optional[str]
-    EMAIL : Optional[str]
-    HOLD_RATE : Optional[str]
+    ID_KIND : Optional[str] = Field(None,description='证件类型')
+    ID_NO : Optional[str] = Field(None,description='证件号码')
+    BIRTH : Optional[str] = Field(None,description='出生日期')
+    GENDER : Optional[str] = Field(None,description='性别')
+    COUNTRY : Optional[str] = Field(None,description='国家')
+    ID_VALIDDATE_START : Optional[str] = Field(None,description='证件有效期开始日')
+    ID_VALIDDATE_END : Optional[str] =Field(None,description='证件有效期结束日')
+    PHONE : Optional[str] = Field(None,description='电话')
+    MOBILE : Optional[str]  = Field(None,description='手机')
+    EMAIL : Optional[str]  = Field(None,description='邮箱')
+    HOLD_RATE : Optional[str] = Field(None,description='持股比例')
     SPECIAL_TYPE : Optional[str]
     POSITION : Optional[str]
-    HOLD_TYPE : Optional[str]
+    HOLD_TYPE : Optional[str] = Field(None,description='持股类型')
     BENEFICIARY_TYPE : Optional[str]
     LOCKED : Optional[str]
     COUNTERPARTY_ID : Optional[str]
@@ -145,18 +145,18 @@ class ReviewAmlBeneficiaryInfo(BaseModel):
 
 #回访流程投资者明细表
 class ReviewBenefitOver(BaseModel):
-    CLIENT_ID : Optional[str]
-    NAME : Optional[str]
-    ID_NO : Optional[str]
-    PROPORTION : Optional[int]
-    FIID  : Optional[int]
-    PROFESSIONAL_INVESTOR_FLAG  : Optional[str]
-    FINANCIAL_ASSETS_OF_LASTYEAR : Optional[float]
-    INVEST_3YEAR_EXP_FLAG : Optional[str]
-    PROD_ID : Optional[str]
-    ASSETS_20MILLION_FLAG : Optional[str]
-    RECORD_ID : Optional[str]
-    ID : Optional[str]
+    CLIENT_ID : Optional[str] = Field(None , description='交易对手编号')
+    NAME : Optional[str] = Field(None , description='姓名或机构名称')
+    ID_NO : Optional[str] = Field(None , description='身份证号或统一信用代码')
+    PROPORTION : Optional[int] = Field(None , description='认购份额比例')
+    FIID  : Optional[int] = Field(None , description='流程编号')
+    PROFESSIONAL_INVESTOR_FLAG  : Optional[str] = Field(None , description='专业投资者标准')
+    FINANCIAL_ASSETS_OF_LASTYEAR : Optional[float] = Field(None , description='上年末金融资产')
+    INVEST_3YEAR_EXP_FLAG : Optional[str] = Field(None , description='3年以上投资经验')
+    PROD_ID : Optional[str] = Field(None , description='产品ID')
+    ASSETS_20MILLION_FLAG : Optional[str] = Field(None , description='最近一年末金融资产是否不低于2000万')
+    RECORD_ID : Optional[str] = Field(None , description='回访流程ID')
+    ID : Optional[str] = Field(None , description='主键')
 
 
 
@@ -272,8 +272,14 @@ async def uploadFile_as(env: str):
     # print(f"s3fileid:{S3filed}")
     # return S3filed
 '''
-@review.post("/clientreview/create",summary="发起回访流程", description="自动发起回访流程")
-async def reviewjob(corporatename: str , customerManager: str, isnew: ReviewIsNew,enviroment:Enviroment):  # 新旧流程暂未开发
+@review.post("/clientreview/create",summary="发起回访流程")
+async def reviewjob(corporatename: str , customerManager: str, isnew: ReviewIsNew,enviroment:Enviroment):
+    '''
+    :param corporatename: 公司名称
+    :param customerManager:客户经理（中文）
+    :param isnew: 0-旧流程 1-新流程
+    :param enviroment:40-固收测试环境 216-股衍测试环境
+    '''
     start = time.time()
     print(f"公司名称 ：{corporatename},客户经理：{customerManager},isnew : {isnew},enviroment : {enviroment}")
     date_1 = date.today()
@@ -602,6 +608,10 @@ async def reviewjob(corporatename: str , customerManager: str, isnew: ReviewIsNe
 
 @review.post("/clientreview/buffer",summary="触发回访缓冲期",description="本接口会自动将资质改成满足,且先取消回访超期原因，然后将今天设置为缓冲期到期日并且触发回访缓冲期")
 async def bufferjob(corporatename: str , enviroment:Enviroment):
+    '''
+    :param corporatename: 公司名称
+    :param enviroment:40-固收测试环境 216-股衍测试环境
+    '''
     print(f"公司名称 ：{corporatename},enviroment : {enviroment}")
     date_1 = date.today()
     date_str = date.strftime(date_1, "%Y-%m-%d")
@@ -691,6 +701,11 @@ async def bufferjob(corporatename: str , enviroment:Enviroment):
 
 @review.get("/checkReviewRecord",summary="查询回访流程record表的信息",description="查询流程状态，当前处理人和会计师事务所，页面信息等数据")
 def check_review_record(recordId : str , enviroment : Enviroment):
+    '''
+    :param recordId: 流程ID
+    :param enviroment: 40-固收测试环境 216-股衍测试环境
+
+    '''
     print(recordId)
     if enviroment.name == "FICC" :
         try :
@@ -713,7 +728,7 @@ def check_review_record(recordId : str , enviroment : Enviroment):
                                     URGENCY_LEVEL ,URGENCY_LEVEL_REASON ,SALE_PERSON ,REVIEW_TERM ,REVIEW_PROCESS_TYPE,SPECIAL_MENTIONED_CUSTOMER ,
                                     VERSION ,NO_MORE_REVIEW ,ACCOUNTING_FIRM_NAME ,SUPPLEMENTARY_MATERIALS_TIME ,SUPPLEMENTARY_MATERIALS ,REACH_TO_03_DATETIME ,
                                     SERIAL_NUMBER from client_review_record where record_id = %s"""
-            cursor.execute(check_record, (recordId))
+            cursor.execute(check_record, (recordId,))
             record_info = cursor.fetchone()
             print(record_info)
             result = ReviewRecordInfo(ID=record_info[0], DOC_ID=record_info[1], TITLE=record_info[2],
@@ -735,7 +750,7 @@ def check_review_record(recordId : str , enviroment : Enviroment):
             print(result)
             return {"code": 200,
                     "env": enviroment.name,
-                    "data": [ReviewRecordInfo(**item) for item in result],
+                    "data": result,
                     "status": "Successfully"}
 
         except Exception as e :
@@ -778,7 +793,7 @@ def check_review_record(recordId : str , enviroment : Enviroment):
             print(result)
             return {"code": 200,
                     "env": enviroment.name,
-                    "data": [ReviewRecordInfo(**item) for item in result],
+                    "data": result,
                     "status": "Successfully"}
         except Exception as e :
             print(e)
@@ -789,6 +804,11 @@ def check_review_record(recordId : str , enviroment : Enviroment):
 
 @review.get("/checkReviewCounterparty",summary="查询回访流程回访对象的信息",description="查询对应各个回访对象的信息（如拟参与业务类型），不包括回访受益人")
 def check_review_counterparty(recordId:str,enviroment : Enviroment):
+    '''
+        :param recordId: 流程ID
+        :param enviroment: 40-固收测试环境 216-股衍测试环境
+
+    '''
     print(recordId)
     if enviroment.name == "FICC":
         try:
@@ -906,6 +926,11 @@ def check_review_counterparty(recordId:str,enviroment : Enviroment):
 
 @review.get("/checkReviewAmlBenificiary",summary="查询回访流程受益人的信息",description="查询回访流程中所有受益人的信息")
 def check_review_aml_beneficiary(recordId:str,enviroment : Enviroment):
+    '''
+            :param recordId: 流程ID
+            :param enviroment: 40-固收测试环境 216-股衍测试环境
+
+    '''
     print(recordId)
     if enviroment.name == "FICC":
         try:
@@ -1047,6 +1072,10 @@ def check_review_aml_beneficiary(recordId:str,enviroment : Enviroment):
 
 @review.get("/checkReviewBenefitOver",summary="查询投资者明细信息",description="查询回访流程中的投资者明细")
 def checkt_review_counterparty_benefit(recordId : str ,enviroment : Enviroment):
+    '''
+        :param recordId: 流程ID
+        :param enviroment: 40-固收测试环境 216-股衍测试环境
+    '''
     print(recordId)
     if enviroment.name == "FICC":
         try:
@@ -1286,6 +1315,12 @@ def checkt_review_counterparty_benefit(recordId : str ,enviroment : Enviroment):
 
 @review.delete("/clientreview/deleteByClientName",summary="根据机构名称来删除在途回访流程",operation_id='delete_review_flow_by_clientName')
 def deleteFlow(enviroment : Enviroment , clientNameList : List[str]):
+
+    '''
+    :param enviroment: 40-固收测试环境 216-股衍测试环境
+    :param clientNameList: 机构名称列表，会删除机构下所有交易对手的在途流程
+    :return:
+    '''
     if enviroment.name == "FICC":
         try :
             db = pymysql.connect(**config)
@@ -1353,8 +1388,12 @@ def deleteFlow(enviroment : Enviroment , clientNameList : List[str]):
             cursor.close()
             db.close()
 
-@review.delete("/clientreview/deleteByRecordId",summary="根据recordId来删除一条在途回访流程",operation_id='delete_review_flow_by_recordId')
+# @review.delete("/clientreview/deleteByRecordId",summary="根据recordId来删除一条在途回访流程",operation_id='delete_review_flow_by_recordId')
+@review.delete("/clientreview/deleteByRecordId",operation_id='delete_review_flow_by_recordId')
 def deleteFlow(enviroment : Enviroment , recordList : List[str]):
+    '''
+    :param recordList:  传record_id列表，可删除一个或者多条流程
+    '''
     if enviroment.name == "FICC":
         try :
             db = pymysql.connect(**config)
