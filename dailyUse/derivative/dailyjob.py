@@ -224,7 +224,7 @@ def modify(client_Id: str ,data : UpdateData,enviroment : Enviroment  , unifieds
             db.close()
 
 
-@derivative.post("/derivative/select",summary="查询常用自用的值",status_code=200)
+@derivative.post("/derivative/select",summary="查询常用的值",status_code=200)
 async def select_commen_data(client_id : List[str],enviroment : Enviroment):
     '''
     :param client_id: 客户编号
