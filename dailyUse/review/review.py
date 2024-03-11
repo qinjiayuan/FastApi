@@ -11,11 +11,17 @@ import pymysql
 import requests
 import uvicorn as uvicorn
 from fastapi import FastAPI, APIRouter, Query, Depends
+from unittest.mock import  MagicMock
 from pydantic import BaseModel, Field
 import logging
 import aiohttp
 import json
 from aiohttp import FormData
+
+
+
+
+
 
 review = APIRouter()
 # log = logging.getLogger("counterpartyjob")
@@ -25,6 +31,12 @@ config = {"host": "10.128.12.222",
           "password": "Gf_otcmtst_test",
           "port": 15006,
           "db": "gf_ficc"}
+#信创股衍
+config_tdsql_otc = {"host": "10.128.12.222",
+          "user": "otcmtst",
+          "password": "Gf_otcmtst_test",
+          "port": 15006,
+          "db": "gf_otc"}
 #股衍
 config_otc = {"host": "10.62.146.18",
               "user": "gf_otc",
@@ -87,6 +99,11 @@ class ReviewRecordInfo(BaseModel):
     REACH_TO_03_DATETIME : Optional[datetime] =Field(None,description="到达03节点的时间")
     SERIAL_NUMBER : Optional[str] =Field(None,description="流程文档编号")
 
+
+class ResponseModel(BaseModel):
+    code: int
+    data:List[ReviewRecordInfo]
+    status : Optional[str] =Field(None,description="状态")
 #回访流程counterparty表
 class ReviewCounterpartyInfo(BaseModel):
     '''
@@ -402,7 +419,7 @@ async def reviewjob(corporatename: str , customerManager: str, isnew: ReviewIsNe
                             print(f"execute_sql:{update_file}")
                             await cursor.execute(update_file)
 
-                        print(f"update_file : {update_file}")
+
                         for i in range(len(record_id)):
                             update_detail = f"""insert into CLIENT_REVIEW_DETAIL(
                             id,record_id,client_name,client_position,email,phone,review_log,suitability,suitability_log,created_datetime) 
@@ -443,7 +460,7 @@ async def reviewjob(corporatename: str , customerManager: str, isnew: ReviewIsNe
             print("{'error':%s}" % e)
             return {"code": 200,
                     "env": enviroment.name,
-                    "data": [ReviewFlowResponse(**item) for item in response_list],
+                    "data": str(e),
                     "status": "Successfully"}
     #股衍的流程
     else :
@@ -575,8 +592,11 @@ async def reviewjob(corporatename: str , customerManager: str, isnew: ReviewIsNe
                         update_record = f"""update client_review_record set accounting_firm_name=:accounting_firm_name ,sale_person =:sale_person , version =:version where record_id =:record_id"""
 
                         print(f"execute_sql:{update_record}")
-
                         cursor.execute(update_record,indata)
+
+                        update_detail = "UPDATE CLIENT_REVIEW_DETAIL SET TRADE_PURPOSE  = '测试回访流程专用' WHERE RECORD_ID = :recordId"
+                        cursor.execute(update_detail,({"recordId":record_id[i][0]}))
+
                     db.commit()
                     end = time.time()
 
@@ -1460,16 +1480,3 @@ def deleteFlow(enviroment : Enviroment , recordList : List[str]):
         finally :
             cursor.close()
             db.close()
-
-
-
-
-
-
-
-
-
-
-
-
-

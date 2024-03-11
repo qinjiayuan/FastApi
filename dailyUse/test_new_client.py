@@ -1,29 +1,24 @@
 import unittest
-
+from unittest.mock import Mock , patch
+import pymysql
 import cx_Oracle
+import requests
+from review.review import config
+import mock
+import unittest
+from unittest.mock import Mock, MagicMock, patch
 
+class cumulate:
 
-class MyTestCase(unittest.TestCase):
+    def add(self,num1,num2):
+        return num1+num2
+    def dele(self,num1,num2):
+        return num1 - num2
 
-    def setUp(self) -> None:
-        host = "10.62.146.18"
-        port = "1521"
-        user = "gf_otc"
-        passwd = "otc1qazXSW@"
-        service_name = 'jgjtest'
-
-        self.db = cx_Oracle.connect(user,passwd,f"{host}:{port}/{service_name}")
-        self.cursor = self.db.cursor()
-        if self.db :
-            print("数据库连接成功")
-        else:
-            raise ValueError("数据库连接失败")
-
-    def tearDown(self) -> None:
-        pass
-
-
-
-
+def mock_test():
+    job = cumulate()
+    job.add = Mock.return_value(60)
+    result = job.add(20,30)
+    print(result)
 if __name__ == '__main__':
-    unittest.main()
+    mock_test()

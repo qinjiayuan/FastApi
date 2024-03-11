@@ -1,0 +1,9 @@
+pymysql
+aiomysql
+cx_Oracle
+jsonpath
+requests
+uvicorn
+fastapi
+pydantic
+logging

@@ -42,6 +42,7 @@ class UpdateData(BaseModel):
     MASTER_AGREEMENT_DATE: Optional[str] = Field(None,title='主协议签订日',description='主协议签订日')
     AUDIT_STATUS:Optional[str] = Field(None,title='审核状态',description='审核状态')
     RETURN_VISIT_DATE: Optional[str] = Field(None,title='回访日期',description='回访日期')
+
 class CommonCheck(BaseModel):
     CORPORATE_NAME: Optional[str] = Field(None, description='机构名称')
     UNIFIEDSOCIAL_CODE: Optional[str] = Field(None, title='统一信用代码')
@@ -168,7 +169,7 @@ def modify(client_Id: str ,data : UpdateData,enviroment : Enviroment  , unifieds
         except Exception as e:
             print(str(e))
             db.rollback()
-            return {"code": 500,
+            return {"code": 200,
                             "env":enviroment.name,
                             "data": f"执行报错：{str(e)}",
                             "status": "Successfully"}
@@ -275,7 +276,7 @@ async def select_commen_data(client_id : List[str],enviroment : Enviroment):
 
         except Exception as e :
             print(str(e))
-            return {"code": 599,
+            return {"code": 500,
                     "env": enviroment.name,
                     "data": str(e),
                     "status": "Failed"}
