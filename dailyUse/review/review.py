@@ -576,7 +576,7 @@ async def reviewjob(corporatename: str , customerManager: str, isnew: ReviewIsNe
                         cursor.execute(update_file)
                     db.commit()
 
-                    print(f"update_file : {update_file}")
+
                     for i in range(len(record_id)):
                         update_detail = f"""insert into CLIENT_REVIEW_DETAIL(
                         id,record_id,client_name,client_position,email,phone,review_log,suitability,suitability_log,created_datetime) 
