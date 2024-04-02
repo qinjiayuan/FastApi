@@ -1,6 +1,9 @@
 from asyncio import gather
 from datetime import date ,datetime
 from enum import Enum
+
+from pydantic.tools import lru_cache
+
 from bpm.bpm_api import open,cancel_in_bpm
 import aiomysql
 import pymysql
@@ -108,7 +111,7 @@ def update_in_kyc(docId: str, client_Id: str, enviroment: str):
 
 
 @derivative.post('/derivative/cancel/flow',summary='撤销在途台账复核流程')
-def cancelFlow(client_Id : str ,enviroment : Enviroment = Path(...,description="40-固收测试环境,216-股衍测试环境")):
+def cancelFlow(client_Id : str ,enviroment : Enviroment ):
     '''
     :param client_Id:
     :param enviroment:
@@ -127,7 +130,7 @@ def cancelFlow(client_Id : str ,enviroment : Enviroment = Path(...,description="
         taskId = open(docId,user)
         cancel_in_bpm(docId,taskId,user)
         update_in_kyc(docId,client_Id,str(enviroment.name))
-        return {"code": 500,
+        return {"code": 200,
                 "env": enviroment.name,
                 "data": f"成功撤销{enviroment.name}中{client_Id}的在途流程",
                 "status": "Successfully"}
@@ -224,7 +227,7 @@ def modify(client_Id: str ,data : UpdateData,enviroment : Enviroment  , unifieds
             cursor.close()
             db.close()
 
-
+@lru_cache(maxsize=128)
 @derivative.post("/derivative/select",summary="查询常用的值",status_code=200)
 async def select_commen_data(client_id : List[str],enviroment : Enviroment):
     '''

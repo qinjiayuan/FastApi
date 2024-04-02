@@ -1,6 +1,7 @@
 import asyncio
 import time
 from datetime import date, datetime, timedelta
+from functools import lru_cache
 from typing import List, Optional
 from uuid import uuid4
 from enum import Enum
@@ -17,11 +18,6 @@ import logging
 import aiohttp
 import json
 from aiohttp import FormData
-
-
-
-
-
 
 review = APIRouter()
 # log = logging.getLogger("counterpartyjob")
@@ -240,7 +236,6 @@ async def uploadFile(env : str):
 
     async with aiohttp.ClientSession() as session:
         for i in range(28):
-            json_data = {"fileBelong": file_name[i % 13], "productName": file_name[i % 13]}
             form_data = FormData()
             form_data.add_field("files", open(file_path, "rb"), filename="data.xlsx",
                                 content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
@@ -412,8 +407,7 @@ async def reviewjob(corporatename: str , customerManager: str, isnew: ReviewIsNe
                                     data_list.append(result[2][_location])
                                     data_tuple.append(data_list)
                                 _location += 1
-                        # update_file = f"""update client_review_file_record set record_id=%s where s3_file_id=%s"""
-                        # await  cursor.executemany(update_file, data_tuple)
+
                         for i in data_tuple:
                             update_file = f"update client_review_file_record set record_id = '{i[0]}' where s3_file_id = '{i[1]}'"
                             print(f"execute_sql:{update_file}")
@@ -437,7 +431,7 @@ async def reviewjob(corporatename: str , customerManager: str, isnew: ReviewIsNe
                             await cursor.execute(update_record)
                         await db.commit()
                         end = time.time()
-                        print(f"回访流程已成功发起，耗时:%.2f s" % (end - start))
+                        print(f"回访流程已成功发起，耗时:%.2f s" %(end - start))
 
                         select_flow = f"select title, doc_id ,record_id ,CURRENT_OPERATOR from client_review_record where client_name = '{corporatename}' and current_status !='CLOSED'"
                         await cursor.execute(select_flow)
@@ -719,6 +713,7 @@ async def bufferjob(corporatename: str , enviroment:Enviroment):
                 "data": "失败",
                 "status": "Failed"}
 
+
 @review.get("/checkReviewRecord",summary="查询回访流程record表的信息",description="查询流程状态，当前处理人和会计师事务所，页面信息等数据")
 def check_review_record(recordId : str , enviroment : Enviroment):
     '''
@@ -821,6 +816,7 @@ def check_review_record(recordId : str , enviroment : Enviroment):
         finally:
             cursor.close()
             db.close()
+
 
 @review.get("/checkReviewCounterparty",summary="查询回访流程回访对象的信息",description="查询对应各个回访对象的信息（如拟参与业务类型），不包括回访受益人")
 def check_review_counterparty(recordId:str,enviroment : Enviroment):
@@ -943,6 +939,7 @@ def check_review_counterparty(recordId:str,enviroment : Enviroment):
         finally:
             cursor.close()
             db.close()
+
 
 @review.get("/checkReviewAmlBenificiary",summary="查询回访流程受益人的信息",description="查询回访流程中所有受益人的信息")
 def check_review_aml_beneficiary(recordId:str,enviroment : Enviroment):
@@ -1089,6 +1086,7 @@ def check_review_aml_beneficiary(recordId:str,enviroment : Enviroment):
         finally:
             cursor.close()
             db.close()
+
 
 @review.get("/checkReviewBenefitOver",summary="查询投资者明细信息",description="查询回访流程中的投资者明细")
 def checkt_review_counterparty_benefit(recordId : str ,enviroment : Enviroment):
@@ -1333,6 +1331,7 @@ def checkt_review_counterparty_benefit(recordId : str ,enviroment : Enviroment):
             cursor.close()
             db.close()
 
+
 @review.delete("/clientreview/deleteByClientName",summary="根据机构名称来删除在途回访流程",operation_id='delete_review_flow_by_clientName')
 def deleteFlow(enviroment : Enviroment , clientNameList : List[str]):
 
@@ -1409,6 +1408,7 @@ def deleteFlow(enviroment : Enviroment , clientNameList : List[str]):
             db.close()
 
 # @review.delete("/clientreview/deleteByRecordId",summary="根据recordId来删除一条在途回访流程",operation_id='delete_review_flow_by_recordId')
+
 @review.delete("/clientreview/deleteByRecordId",operation_id='delete_review_flow_by_recordId')
 def deleteFlow(enviroment : Enviroment , recordList : List[str]):
     '''
@@ -1480,3 +1480,4 @@ def deleteFlow(enviroment : Enviroment , recordList : List[str]):
         finally :
             cursor.close()
             db.close()
+
