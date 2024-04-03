@@ -134,6 +134,6 @@ if __name__ == '__main__':
      xmind当中 如果是步骤必须加上'step', 如“步骤1” 要写成“step步骤1”且步骤后面必须接中文冒号，“预期”必须写成“expection预期1”,等，每个连续用例的合并是根据测试概述来合并，如果测试概述不同，则不连续的则不会合并
     '''
     xmind_path =  r'C:\Users\EDY\Desktop\Xmind\2024\测试tab.xmind'  #附件路径
-    name = 'wxyiwenmin' #填入自己的名字
+    name = 'wxqinjiayuan' #填入自己的名字
     demo = Xmind_to_excel(xmind_path,name)
     result = demo.write_to_excel()
