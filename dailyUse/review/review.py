@@ -1481,3 +1481,73 @@ def deleteFlow(enviroment : Enviroment , recordList : List[str]):
             cursor.close()
             db.close()
 
+@review.post("/clientreview/signup",summary='测试注册压测接口')
+def signup(name : str ,age :int , phone :str = '13112345678',pwd :str ='123456'):
+    """
+    测试注册压测接口
+    ---
+    parameters:
+      - name: name
+        in: query
+        type: string
+        required: true
+      - name: age
+        in: query
+        type: integer
+        required: true
+      - name: phone
+        in: query
+        type: string
+        required: true
+      - name: pwd
+        in: query
+        type: string
+        required: true
+    """
+    db ,cursor = connect_database()
+    print(f"name:{name},age:{age},phone:{phone},pwd:{pwd}")
+    try :
+        cursor.execute("insert into buffer_qjy values(:name,:age,:phone,:pwd)",({"name":name,"age":age,"phone":phone,"pwd":pwd}))
+        db.commit()
+        return {"code": 200,
+                "data": "注册成功", }
+    except Exception as e :
+        print(f"{e}")
+    finally:
+        close_database(db,cursor)
+
+@review.get('/clientreview/check_info')
+def get_info(name :str ):
+    """
+    测试查询信息压测接口
+    ---
+    parameters:
+      - name: name
+        in: query
+        type: string
+        required: true
+    """
+    db ,cursor = connect_database()
+    try :
+
+        cursor.execute("select doc_id from client_review_record where client_name = :client_name and current_status !=:status",({"client_name":name,'status':'CLOSED'}))
+        result = cursor.fetchall()
+        if result :
+
+            return {"code": 200,
+                    "data":[docId[0] for docId in result]}
+        else:
+            return {"code": 500,
+                    "data":"failed" }
+    except Exception as e :
+        print(f"{e}")
+    finally:
+        close_database(db,cursor)
+
+def connect_database():
+    db = cx_Oracle.connect("gf_otc", "otc1qazXSW@", "10.62.146.18:1521/jgjtest")
+    cursor = db.cursor()
+    return db,cursor
+def close_database(db,cursor):
+    cursor.close()
+    db.close()

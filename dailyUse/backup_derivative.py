@@ -28,7 +28,7 @@ config_otc = {"host": "10.62.146.18",
 #           "port": 15006,
 #           "db": "gf_otc"}
 
-#备份固收数据库
+#备份固收数据库(后续股衍oracle迁移到tdsql的话,直接复制backup_derivative_mysql,并且修改函数方法名（最好与下面的backup_derivative_oracle 同名）、数据库配置)
 def backup_derivative_mysql():
     _today  = datetime.datetime.today()
     _today = _today.strftime('%Y%m%d')

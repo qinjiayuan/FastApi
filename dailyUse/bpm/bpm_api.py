@@ -1,4 +1,3 @@
-import aiohttp
 import requests
 
 bpm_env = "http://bpmuatps1.gf.com.cn:8080"
